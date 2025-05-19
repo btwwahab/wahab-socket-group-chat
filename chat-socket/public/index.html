@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChatConnect - Realtime Messaging</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Add these elements right after <body> tag and before the login modal -->
+<button class="mobile-toggle" id="mobile-menu-toggle">
+  <i class="fa-solid fa-bars"></i>
+</button>
+<div class="mobile-overlay" id="mobile-overlay"></div>
+
+<!-- ... rest of your existing code ... -->
+  <!-- Add this login modal before the app-container -->
+  <div class="modal-overlay" id="login-modal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <i class="fa-solid fa-comments brand-icon"></i>
+        <h2>Welcome to ChatConnect</h2>
+      </div>
+      <div class="modal-body">
+        <p>Please enter your name to join the chat</p>
+        <div class="input-group">
+          <label for="username-input">Display Name</label>
+          <input type="text" id="username-input" placeholder="Enter your name">
+        </div>
+        <div class="input-group">
+          <label for="avatar-color">Choose Avatar Color</label>
+          <div class="color-options">
+            <div class="color-option" data-color="#4f46e5" style="background-color: #4f46e5"></div>
+            <div class="color-option" data-color="#10b981" style="background-color: #10b981"></div>
+            <div class="color-option" data-color="#f59e0b" style="background-color: #f59e0b"></div>
+            <div class="color-option" data-color="#ef4444" style="background-color: #ef4444"></div>
+            <div class="color-option" data-color="#8b5cf6" style="background-color: #8b5cf6"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="join-chat-btn" class="primary-btn">Join Chat</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="app-brand">
+          <i class="fa-solid fa-comments brand-icon pulse"></i>
+          <h1>ChatConnect</h1>
+        </div>
+        <div class="connection-status">
+          <div class="status-indicator" id="connection-status"></div>
+          <span id="connection-text">Disconnected</span>
+        </div>
+      </div>
+      
+      <div class="search-container">
+        <div class="search-input-wrapper">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          <input type="text" placeholder="Search users..." class="search-input">
+        </div>
+      </div>
+      
+      <div class="users-section">
+        <h2 class="section-title">
+          <i class="fa-solid fa-users section-icon"></i>
+          Active Users
+          <span class="active-count">3</span>
+        </h2>
+        <div class="user-list" id="user-list">
+          <!-- Will be populated by JS -->
+        </div>
+      </div>
+      
+      <div class="user-profile">
+        <div class="current-user-avatar">
+          <span>ME</span>
+        </div>
+        <div class="current-user-info">
+          <h3>Your Profile</h3>
+          <p class="status-text">Online</p>
+        </div>
+        <button class="settings-btn">
+          <i class="fa-solid fa-gear"></i>
+        </button>
+      </div>
+    </aside>
+    
+    <main class="chat-area">
+      <header class="chat-header">
+        <div class="chat-info">
+          <h2 class="room-name">General Chat Room</h2>
+          <p class="room-description">Welcome to the main discussion area</p>
+        </div>
+        <div class="header-actions">
+          <button class="action-button" title="Search in conversation">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+          <button class="action-button" title="Video call">
+            <i class="fa-solid fa-video"></i>
+          </button>
+          <button class="action-button" title="More options">
+            <i class="fa-solid fa-ellipsis-vertical"></i>
+          </button>
+        </div>
+      </header>
+    
+      <div class="messages-wrapper">
+        <div class="messages-container" id="messages-container">
+          <div class="date-divider">
+            <span>Today</span>
+          </div>
+          <!-- Messages will be populated by JS -->
+        </div>
+        
+        <div class="typing-indicator" id="typing-indicator">
+          <div class="typing-avatar"></div>
+          <div class="typing-content">
+            Someone is typing<span class="dots"><span></span><span></span><span></span></span>
+          </div>
+        </div>
+      </div>
+    
+      <div class="message-composer">
+        <button class="composer-btn" title="Add attachment">
+          <i class="fa-solid fa-paperclip"></i>
+        </button>
+        
+        <div class="input-container">
+          <textarea id="message-input" placeholder="Type your message here..." rows="1"></textarea>
+          <button class="emoji-btn" title="Add emoji">
+            <i class="fa-regular fa-face-smile"></i>
+          </button>
+        </div>
+        
+        <button class="send-btn" id="send-btn" title="Send message">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+    </main>
+    </div>
+
+  <!-- Add settings modal -->
+  <div class="modal-overlay" id="settings-modal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2>Profile Settings</h2>
+        <button class="close-modal-btn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="profile-settings">
+          <div class="avatar-preview" id="avatar-preview">
+            <!-- Will show user initials -->
+          </div>
+          
+          <div class="input-group">
+            <label for="settings-username">Display Name</label>
+            <input type="text" id="settings-username">
+          </div>
+          
+          <div class="input-group">
+            <label>Avatar Color</label>
+            <div class="color-options">
+              <div class="color-option" data-color="#4f46e5" style="background-color: #4f46e5"></div>
+              <div class="color-option" data-color="#10b981" style="background-color: #10b981"></div>
+              <div class="color-option" data-color="#f59e0b" style="background-color: #f59e0b"></div>
+              <div class="color-option" data-color="#ef4444" style="background-color: #ef4444"></div>
+              <div class="color-option" data-color="#8b5cf6" style="background-color: #8b5cf6"></div>
+            </div>
+          </div>
+          
+          <div class="input-group">
+            <label>Status</label>
+            <div class="status-options">
+              <div class="status-option selected" data-status="online">
+                <span class="status-dot online"></span>
+                <span>Online</span>
+              </div>
+              <div class="status-option" data-status="away">
+                <span class="status-dot away"></span>
+                <span>Away</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="cancel-settings-btn" class="secondary-btn">Cancel</button>
+        <button id="save-settings-btn" class="primary-btn">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="script.js"></script>
+  <div id="particles-js"></div>
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+  particlesJS("particles-js", {
+    "particles": {
+      "number": {
+        "value": 40,
+        "density": {
+          "enable": true,
+          "value_area": 800
+        }
+      },
+      "color": {
+        "value": "#00f7ff"
+      },
+      "shape": {
+        "type": "circle",
+        "stroke": {
+          "width": 0,
+          "color": "#000000"
+        }
+      },
+      "opacity": {
+        "value": 0.3,
+        "random": true
+      },
+      "size": {
+        "value": 3,
+        "random": true
+      },
+      "line_linked": {
+        "enable": true,
+        "distance": 150,
+        "color": "#00f7ff",
+        "opacity": 0.2,
+        "width": 1
+      },
+      "move": {
+        "enable": true,
+        "speed": 1,
+        "direction": "none",
+        "random": true,
+        "out_mode": "out"
+      }
+    },
+    "interactivity": {
+      "detect_on": "canvas",
+      "events": {
+        "onhover": {
+          "enable": true,
+          "mode": "grab"
+        },
+        "onclick": {
+          "enable": true,
+          "mode": "push"
+        },
+        "resize": true
+      }
+    },
+    "retina_detect": true
+  });
+</script>
+</body>
+</html>
