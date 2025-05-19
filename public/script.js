@@ -434,8 +434,8 @@ function handleLogin() {
 let socket;
 
 function connectToSocketServer() {
-    // socket = io('http://localhost:3000');
-    socket = io();
+    socket = io('http://localhost:3000');
+    // socket = io();
 
     // Typing indicator timeout variable
     let typingTimeout;
